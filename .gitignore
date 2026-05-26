@@ -1,0 +1,55 @@
+# Environment and secrets
+.env
+.env.*
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+.Python
+
+# uv / pip
+.cache/
+
+# Training outputs
+runs/
+data/
+audit_log.jsonl
+eval_audit_log.jsonl
+format_fail_audit.jsonl
+
+# Large result files (raw eval JSONL; reference the published HF dataset instead)
+results/full_eval_results.jsonl
+
+# Hydra outputs
+outputs/
+.hydra/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Detector harness cache / vendor outputs
+detectors/.venv/
+detectors/cache/
+detectors/logs/
+detectors/results/models/
+detectors/vendor/

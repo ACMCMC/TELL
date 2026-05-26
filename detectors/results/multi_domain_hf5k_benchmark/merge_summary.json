@@ -1,0 +1,102 @@
+[
+  {
+    "complete": true,
+    "detector": "openai_roberta",
+    "expected_rows": 5000,
+    "merged_predictions": "/workspace/rl-detector/detectors/results/multi_domain_hf5k_benchmark/merged_predictions/openai_roberta.predictions.jsonl",
+    "metrics": "/workspace/rl-detector/detectors/results/multi_domain_hf5k_benchmark/metrics/openai_roberta.metrics.json",
+    "missing_shards": [],
+    "n_errors": 0,
+    "n_rows": 5000
+  },
+  {
+    "complete": true,
+    "detector": "chatgpt_d",
+    "expected_rows": 5000,
+    "merged_predictions": "/workspace/rl-detector/detectors/results/multi_domain_hf5k_benchmark/merged_predictions/chatgpt_d.predictions.jsonl",
+    "metrics": "/workspace/rl-detector/detectors/results/multi_domain_hf5k_benchmark/metrics/chatgpt_d.metrics.json",
+    "missing_shards": [],
+    "n_errors": 0,
+    "n_rows": 5000
+  },
+  {
+    "complete": true,
+    "detector": "argugpt",
+    "expected_rows": 5000,
+    "merged_predictions": "/workspace/rl-detector/detectors/results/multi_domain_hf5k_benchmark/merged_predictions/argugpt.predictions.jsonl",
+    "metrics": "/workspace/rl-detector/detectors/results/multi_domain_hf5k_benchmark/metrics/argugpt.metrics.json",
+    "missing_shards": [],
+    "n_errors": 0,
+    "n_rows": 5000
+  },
+  {
+    "complete": true,
+    "detector": "radar",
+    "expected_rows": 5000,
+    "merged_predictions": "/workspace/rl-detector/detectors/results/multi_domain_hf5k_benchmark/merged_predictions/radar.predictions.jsonl",
+    "metrics": "/workspace/rl-detector/detectors/results/multi_domain_hf5k_benchmark/metrics/radar.metrics.json",
+    "missing_shards": [],
+    "n_errors": 0,
+    "n_rows": 5000
+  },
+  {
+    "complete": true,
+    "detector": "mage_d",
+    "expected_rows": 5000,
+    "merged_predictions": "/workspace/rl-detector/detectors/results/multi_domain_hf5k_benchmark/merged_predictions/mage_d.predictions.jsonl",
+    "metrics": "/workspace/rl-detector/detectors/results/multi_domain_hf5k_benchmark/metrics/mage_d.metrics.json",
+    "missing_shards": [],
+    "n_errors": 0,
+    "n_rows": 5000
+  },
+  {
+    "complete": true,
+    "detector": "detectllm_lrr",
+    "expected_rows": 5000,
+    "merged_predictions": "/workspace/rl-detector/detectors/results/multi_domain_hf5k_benchmark/merged_predictions/detectllm_lrr.predictions.jsonl",
+    "metrics": "/workspace/rl-detector/detectors/results/multi_domain_hf5k_benchmark/metrics/detectllm_lrr.metrics.json",
+    "missing_shards": [],
+    "n_errors": 0,
+    "n_rows": 5000
+  },
+  {
+    "complete": true,
+    "detector": "fast_detectgpt",
+    "expected_rows": 5000,
+    "merged_predictions": "/workspace/rl-detector/detectors/results/multi_domain_hf5k_benchmark/merged_predictions/fast_detectgpt.predictions.jsonl",
+    "metrics": "/workspace/rl-detector/detectors/results/multi_domain_hf5k_benchmark/metrics/fast_detectgpt.metrics.json",
+    "missing_shards": [],
+    "n_errors": 0,
+    "n_rows": 5000
+  },
+  {
+    "complete": true,
+    "detector": "pangram_editlens_llama",
+    "expected_rows": 5000,
+    "merged_predictions": "/workspace/rl-detector/detectors/results/multi_domain_hf5k_benchmark/merged_predictions/pangram_editlens_llama.predictions.jsonl",
+    "metrics": "/workspace/rl-detector/detectors/results/multi_domain_hf5k_benchmark/metrics/pangram_editlens_llama.metrics.json",
+    "missing_shards": [],
+    "n_errors": 0,
+    "n_rows": 5000
+  },
+  {
+    "complete": true,
+    "detector": "detectllm_npr",
+    "expected_rows": 5000,
+    "merged_predictions": "/workspace/rl-detector/detectors/results/multi_domain_hf5k_benchmark/merged_predictions/detectllm_npr.predictions.jsonl",
+    "metrics": "/workspace/rl-detector/detectors/results/multi_domain_hf5k_benchmark/metrics/detectllm_npr.metrics.json",
+    "missing_shards": [],
+    "n_errors": 0,
+    "n_rows": 5000
+  },
+  {
+    "complete": true,
+    "detector": "dnagpt",
+    "expected_rows": 5000,
+    "merged_predictions": "/workspace/rl-detector/detectors/results/multi_domain_hf5k_benchmark/merged_predictions/dnagpt.predictions.jsonl",
+    "metrics": "/workspace/rl-detector/detectors/results/multi_domain_hf5k_benchmark/metrics/dnagpt.metrics.json",
+    "missing_shards": [],
+    "n_errors": 0,
+    "n_rows": 5000
+  }
+]

@@ -1,0 +1,16 @@
+name	commit	url
+aigc_mpu	c745a14bc522e60e433bb94f2fea535f4824981c	https://github.com/YuchuanTian/AIGC_text_detector.git
+argugpt	cfbd00e75b63db44756375cfc1ee4278f8cd2bf1	https://github.com/huhailinguist/ArguGPT.git
+binoculars	c8ae2f90d50ee696418bc71d8d9e5020e5f9d7b8	https://github.com/ahans30/Binoculars.git
+chatgpt_detection	1f8c15c28f87e09a5abfd86ee6e15005dc7d2119	https://github.com/Hello-SimpleAI/chatgpt-comparison-detection.git
+detectgpt	447d2ce8177004203f42d1da87d7f93a2e31ad52	https://github.com/eric-mitchell/detect-gpt.git
+detectllm	1db7935ae8c6f68cb3ed36f97c207e14b622366d	https://github.com/mbzuai-nlp/DetectLLM.git
+dnagpt	4130c939f1e302c8bf6fd0c9fea0d939a46fdd40	https://github.com/Xianjun-Yang/DNA-GPT.git
+fast_detectgpt	971b05202bac2bb504d60c0ac0812fea7a8f7c82	https://github.com/baoguangsheng/fast-detect-gpt.git
+ghostbuster	f60068d006b7dc617af90e7148118837e85d0555	https://github.com/vivek3141/ghostbuster.git
+gptid	8c8759ef94c8769e2f40f3e507f270e4c948a562	https://github.com/ArGintum/GPTID.git
+imgtb	e2cf6b3427c571384ec6782b394dc01398543e4b	https://github.com/kinit-sk/IMGTB.git
+llm_detector_eval	3754d8088aabe38ab652edcf6060304966ba7cd7	https://github.com/LeiLiLab/llm-detector-eval.git
+mage	6d11f851184b9f04166f952ddc1f47727f36710f	https://github.com/yafuly/MAGE.git
+radar	3a9acf6d3d9b1766f5c6497af96601dea1ead868	https://github.com/IBM/RADAR.git
+t5_sentinel	cd600a0c577fb73592eacedd7cd5aae2e0950e5e	https://github.com/MarkChenYutian/T5-Sentinel-public.git

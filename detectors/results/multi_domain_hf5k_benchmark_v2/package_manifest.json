@@ -1,0 +1,155 @@
+{
+  "created_for": "Aldan bootstrap handoff",
+  "source_run": "/data/suraj/detector_runs/acmc_hf_multidomain_20260524",
+  "detectors": [
+    "aigc_mpu_env3",
+    "binoculars",
+    "logrank_gpt2_medium",
+    "phd_roberta",
+    "t5_sentinel"
+  ],
+  "splits": [
+    "test",
+    "validation"
+  ],
+  "joined_outputs": [
+    {
+      "split": "test",
+      "rows": 5000,
+      "joined_jsonl": "joined/test_examples_with_five_detector_scores.jsonl",
+      "joined_tsv": "joined/test_examples_with_five_detector_scores.tsv",
+      "missing_predictions_by_detector": {
+        "aigc_mpu_env3": 0,
+        "binoculars": 0,
+        "logrank_gpt2_medium": 0,
+        "phd_roberta": 0,
+        "t5_sentinel": 0
+      },
+      "error_rows_by_detector": {
+        "aigc_mpu_env3": 0,
+        "binoculars": 0,
+        "logrank_gpt2_medium": 0,
+        "phd_roberta": 165,
+        "t5_sentinel": 0
+      }
+    },
+    {
+      "split": "validation",
+      "rows": 5000,
+      "joined_jsonl": "joined/validation_examples_with_five_detector_scores.jsonl",
+      "joined_tsv": "joined/validation_examples_with_five_detector_scores.tsv",
+      "missing_predictions_by_detector": {
+        "aigc_mpu_env3": 0,
+        "binoculars": 0,
+        "logrank_gpt2_medium": 0,
+        "phd_roberta": 0,
+        "t5_sentinel": 0
+      },
+      "error_rows_by_detector": {
+        "aigc_mpu_env3": 0,
+        "binoculars": 0,
+        "logrank_gpt2_medium": 0,
+        "phd_roberta": 189,
+        "t5_sentinel": 0
+      }
+    }
+  ],
+  "notes": [
+    "input/*.jsonl contains the exact examples/text that were scored.",
+    "predictions/{split}/*.predictions.jsonl contains raw merged per-detector outputs.",
+    "joined/*_examples_with_five_detector_scores.jsonl joins examples with detector scores by id for bootstrapping.",
+    "PHD has explicit error rows where no score is defined; these remain in the joined files with null score and non-null error."
+  ],
+  "files": [
+    {
+      "path": "input/test.jsonl",
+      "bytes": 10134563,
+      "sha256": "795ec75ffa0ce5f59e71fdf82ac985e7f4fe9a023d6e20c18a17429fe8614e98"
+    },
+    {
+      "path": "input/validation.jsonl",
+      "bytes": 10249813,
+      "sha256": "75bd2717207ae9dd9e003839f76a499f658278785b226eed4830c5c0deba1920"
+    },
+    {
+      "path": "joined/test_examples_with_five_detector_scores.jsonl",
+      "bytes": 20654207,
+      "sha256": "49472b5d7c39ca3f0a2380e6a93103ac7aa3315b5e8f31b347be98942126104d"
+    },
+    {
+      "path": "joined/test_examples_with_five_detector_scores.tsv",
+      "bytes": 10475731,
+      "sha256": "4654ccce6028848948347ce7fa22c4ac6ac88c929365ea474a4e97f106f9235e"
+    },
+    {
+      "path": "joined/validation_examples_with_five_detector_scores.jsonl",
+      "bytes": 20762687,
+      "sha256": "59d439d066721b6b6092ca2b736f7828ade56e2f02e0bae9fab7b65fd8164b13"
+    },
+    {
+      "path": "joined/validation_examples_with_five_detector_scores.tsv",
+      "bytes": 10589405,
+      "sha256": "e5e87d6e54d1761828fe54e72289eef4a8acb324ff7dd1f0320c63c045c4f605"
+    },
+    {
+      "path": "predictions/test/aigc_mpu_env3.predictions.jsonl",
+      "bytes": 2497659,
+      "sha256": "5b428ddbd5e6fa0ba7a3548c59b5d783bccbb5a0ba857c1127438eaf5994c638"
+    },
+    {
+      "path": "predictions/test/binoculars.predictions.jsonl",
+      "bytes": 2237486,
+      "sha256": "8611454f04413c87f325f2c62332f4b39ce649d550e61e60ae8abb0be23ab51c"
+    },
+    {
+      "path": "predictions/test/logrank_gpt2_medium.predictions.jsonl",
+      "bytes": 3194211,
+      "sha256": "1037a904d4e9e9a65a88fdf269ad91360dfc61d8ae32d1e7c0e133fac20e6791"
+    },
+    {
+      "path": "predictions/test/phd_roberta.predictions.jsonl",
+      "bytes": 3573851,
+      "sha256": "6b1d43899d197aa9f2cd27754ea29b5ddd8a4c114e235ad2e9f355cf24b2aae7"
+    },
+    {
+      "path": "predictions/test/t5_sentinel.predictions.jsonl",
+      "bytes": 3721082,
+      "sha256": "aef90947e5616ab5327b38cd5c30e431b00e37c47e04441942d461f7752f9e41"
+    },
+    {
+      "path": "predictions/validation/aigc_mpu_env3.predictions.jsonl",
+      "bytes": 2531030,
+      "sha256": "2ee1b5ca3609f4ae9f4474a9aad9d734bc682e07288b2fce4bada221e395442e"
+    },
+    {
+      "path": "predictions/validation/binoculars.predictions.jsonl",
+      "bytes": 2271238,
+      "sha256": "4ca91a35ea5aa1d315a777a6ee0e7be627f39fc6b478496f6c32d59f0c005e71"
+    },
+    {
+      "path": "predictions/validation/logrank_gpt2_medium.predictions.jsonl",
+      "bytes": 3227626,
+      "sha256": "277fa08cffa6ce8a62da661076cd9e5eeba729fb29c4340b9944d69462598444"
+    },
+    {
+      "path": "predictions/validation/phd_roberta.predictions.jsonl",
+      "bytes": 3599978,
+      "sha256": "6c683d1e7349b320995c5199e438754e758d42bf9ac51d86e8eecaacd0d420a3"
+    },
+    {
+      "path": "predictions/validation/t5_sentinel.predictions.jsonl",
+      "bytes": 3754497,
+      "sha256": "1e6f8350ef1f7017bff157b87334cb540aba235186b759e7da0174f31ac73af1"
+    },
+    {
+      "path": "summaries/paper_five_requested_detectors_results.json",
+      "bytes": 273282,
+      "sha256": "75a74ed7f64076d085ba43f0bc0b751050d84173bb29d127e0690af7db902eb5"
+    },
+    {
+      "path": "summaries/paper_five_requested_detectors_results.tsv",
+      "bytes": 5407,
+      "sha256": "d21370370ded96fcf503970822b32bc3947fd91d6433cc06323198a5dde130dc"
+    }
+  ]
+}

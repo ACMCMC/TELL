@@ -1,0 +1,37 @@
+{
+  "git_sha": "321fd00fb1d79af592bb449f8848a15513f5ed6e",
+  "dataset_hf_repo": "acmc/multi_domain_ai_human_text",
+  "eval_split": "test",
+  "n_eval_rows": 5000,
+  "split_policy": "unified_v3_paper_splits (see docs/DATASET_REPORT.md)",
+  "detectors": [
+    "openai_roberta",
+    "chatgpt_d",
+    "argugpt",
+    "radar",
+    "mage_d",
+    "detectllm_lrr",
+    "fast_detectgpt",
+    "pangram_editlens_llama",
+    "detectllm_npr",
+    "dnagpt"
+  ],
+  "excluded": ["mfd", "binoculars", "ghostbuster"],
+  "shards": 32,
+  "gpus": "0,0",
+  "launcher": "detectors/scripts/launch_multi_domain_hf5k_benchmark.sh",
+  "output_root": "detectors/results/multi_domain_hf5k_benchmark",
+  "input_jsonl": "detectors/results/input/multi_domain_ai_human_text_test.jsonl",
+  "tmux_worker": "hf5k_bench_gpu0",
+  "tmux_merge": "hf5k_bench_merge",
+  "status": "complete",
+  "resumed_at": "2026-05-19T18:28:25Z",
+  "shards_done_at_resume": 284,
+  "completed_at": "2026-05-20T01:32:43Z",
+  "n_eval_rows_scored": 5000,
+  "artifacts": [
+    "summary.tsv",
+    "merged_predictions/*.predictions.jsonl",
+    "metrics/*.metrics.json"
+  ]
+}

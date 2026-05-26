@@ -1,0 +1,292 @@
+# https://hydra.cc/docs/1.3/usage/1.3/
+hydra:
+  job:
+    chdir: false
+  run:
+    dir: .
+  output_subdir: null
+
+# CLI-only fields for `python -m rl_detector.train` (Hydra path). Legacy `--resume` / `--name` still work.
+run:
+  resume: null  # set to your SFT checkpoint, e.g. "tinker://<run-id>:train:0/weights/sft-final"
+  resume_step: null
+  eval_only: false
+  checkpoint: null
+  run_name: tell_run
+
+data:
+  max_doc_tokens: 256   # prefix truncate; 512 ablation: set 512 + distinct wandb.name, data.max_doc_tokens=512
+  min_doc_tokens: 64    # drop docs shorter than this after truncation/tokenization
+  max_train_docs: 250000  # max docs loaded for training
+  max_eval_docs: 64    # eval docs loaded (also controls EVAL_SAMPLE_SIZE)
+  cache:
+    enabled: true
+    base_dir: ".cache/preprocessed_docs"
+  # stream until we have max_eval_docs/2 of BOTH classes, fixes AUROC noise when the split is label skewed
+  balance_eval_pool: true
+  # sample eval pool proportional to dataset frequency (mirrors test dist); false = round-robin per stratum
+  proportional_eval_pool: true
+  # restrict parquet rows by unified dataset_id (null = no filter on that side)
+  train_dataset_ids_filter: null
+  # eval: same subset as train for this corpus-only run (null would mirror train anyway)
+  eval_dataset_ids_filter: null
+  # restrict by exact stratum key "dataset_id|domain|label" (null = all strata); eval falls back to train value
+  train_strata_filter: null
+  eval_strata_filter: null
+  train_docs_path: hf://acmc/multi_domain_ai_human_text/train
+  eval_docs_path: hf://acmc/multi_domain_ai_human_text/validation
+
+model:
+  base_model: "openai/gpt-oss-120b"
+  lora_rank: 32
+  use_special_annotation_tokens: true   # remap reserved added-token IDs (see prompt_utils ANN_SPECIAL_ID_*)
+  checkpoint: "acmc/TELL"  # set to your SFT checkpoint to run RL from scratch, or use "acmc/TELL" for the released weights
+
+sft:
+  dataset_path: ""  # empty = skip acmc/TELL; expert_annot_dataset_path only
+  output_dir: "runs/sft_expert_regen_gpt55_v3"
+  epochs: 1
+  batch_size: 8
+  learning_rate: 5e-5
+  log_every_steps: 20
+  checkpoint_every_steps: 200
+  label_injection_enabled: true    # label hint in analysis channel (required for hint_outer_ce)
+  label_injection_mix_ratio: 1.0   # all expert rows get hint + hint-CE pairs
+  hint_outer_ce_enabled: true       # CE aux on outer verdict type tokens (correct + flipped hint)
+  hint_outer_ce_every_n_steps: 1    # aggressive rate: run one hint-CE step per N main steps (while below target)
+  hint_outer_ce_cooldown_every_n: 8  # maintenance rate once type_prob EMA >= target (regular pulse to prevent drift)
+  hint_outer_ce_target_follow_rate: 0.99  # type_prob EMA threshold to enter cooldown (real prob, not broken proxy)
+  hint_outer_ce_ema_alpha: 0.1      # EMA decay for type_prob tracking
+  hint_outer_ce_lr_scale: 2.0       # hint-CE LR = sft.learning_rate * this (was 5.0, reduced to avoid format collapse)
+  expert_annot_dataset_path: "hf://acmc/expert-annotated-TELL"
+  expert_annot_oversample_factor: 2   # repeat expert-annot train rows N times before merging with TELL (0 or 1 = no repeat)
+  tell_max_rows: 960                  # cap TELL train rows after loading (null = no cap); ~2x oversampled expert rows (2*2*240=960)
+  style_clm_path: ""  # disabled; expert-annot full completions only
+  style_clm_every_n_steps: 1
+  style_clm_lr_scale: 1.0
+  style_clm_max_tokens: 512
+  paced_annotation_dropout:
+    enabled: true
+    words_per_annotation: 20.0   # target ~1 span per N words; docs already under target are unchanged
+    high_score_keep_bonus: 3.0   # high-score (1.0) spans are 3x more likely to survive than score-0 spans
+  why_idf_dropout_enabled: false  # keep all nested annotations (no dropout)
+  why_idf_genericity_mode: span_why_overlap
+  why_idf_why_bucket_max_chars: 320
+  # null = overlap buckets use the same prefix length as why_idf_why_bucket_max_chars (one cap). Set an int only to use a shorter overlap prefix (optional).
+  why_idf_why_bucket_key_chars: null
+  # λ in (1 - λ * max_jaccard); 0 ignores span overlap; 1 is the old full penalty.
+  why_idf_span_why_jaccard_weight: 0.5
+  # log(1+max(|bucket|, n)) so singleton buckets are not forced to G=0.
+  why_idf_span_why_min_bucket_n_for_log: 2
+  # span_why_overlap rank: blends bucket-size rank and inverted IDF rank; drop_strength scales blended rank.
+  # Target ~22% median coverage → drop_strength≈0.45; bump to 0.6 for ~30%, drop to 0.3 for ~15%.
+  why_idf_span_why_overlap_p_mass: rank
+  # Reference quantile for subtract_quantile (and stored as span_why_g_excess_ref); ignored for rank/scaled.
+  why_idf_span_why_excess_quantile: 0.25
+  why_idf_spacy_pipe_batch_size: 256
+  why_idf_span_spacy_exclude_stopwords: true
+  why_idf_char_ngram_min: 4
+  why_idf_char_ngram_max: 8
+  why_idf_drop_strength: 0.55
+  why_idf_p_drop_cap: 0.85
+  # multiply IDF drop p by max(0, 1 - weight * score); 0 = ignore score; 1 = score 1 never dropped by mass
+  why_idf_score_keep_weight: 1.0
+  # Absolute number of nested tells to keep per document [keep_min, keep_max].
+  # Generic docs (high mean p_drop) lean toward keep_min; specific docs toward keep_max.
+  # At least 1 tell always survives. Both values are clamped to n if n < keep_max.
+  why_idf_keep_min: 1
+  why_idf_keep_max: 5
+
+sft_editlens:
+  split: train
+  num_examples: 10
+  num_ai_examples: null
+  num_human_examples: null
+  scan_limit: 40000
+  max_candidate_sources: 5000
+  concurrency: 32
+  max_doc_tokens: ${data.max_doc_tokens}
+  samples_per_doc: 1
+  temperature: 0.7
+  top_p: 0.9
+  service_tier: flex
+  generation_model: gpt-5.5
+  output_flat: data/sft_editlens_audit_flat.jsonl
+  output_examples: data/sft_editlens_audit_examples.jsonl
+  output_audit: data/sft_editlens_audit_log.jsonl
+  output_manifest: data/sft_editlens_manifest.json
+  resume: false
+  checkpoint_every: 25
+  selected_example_ids_manifest: null
+
+training:
+  use_rubric_scorer: false
+  rubric_per_ann_weight: 0.7
+  rubric_rollout_weight: 0.3
+  use_fidelity_gate: true
+  fix_format_errors: true
+  format_fix_max_ratio: 0.15
+  docs_per_step: 8
+  label_noise_correct_prob: 0.5
+  label_noise_flip_prob: 0.0
+  label_noise_unknown_prob: 0.5
+  learning_rate: 1e-5
+  adaptive_lr_reward_low: 0.65
+  adaptive_lr_reward_high: 0.80
+  adaptive_lr_min_scale: 0.25
+  adaptive_lr_ema_alpha: 0.15
+  is_ratio_max: 2.0
+  rl_loss_fn_config:
+    clip_low_threshold: 0.8
+    clip_high_threshold: 1.28
+    adv_clip_scale: 10.0
+  credibility_token_alpha: 2.0
+  kl_penalty_coef: 0.02  # 0.02 prevents span-inflation / format collapse without over-constraining detection (0.05 pulled AUROC 0.92→0.80); set to 0 on CLI to disable
+  # Always sft-final; never an RL best-step checkpoint (resume may be RL, KL anchor must not follow it).
+  kl_reference_checkpoint: null  # must point to the SFT checkpoint (not an RL checkpoint); set before running RL
+  max_steps: 500
+  sampler:
+    mode: "stratum_plus_replay"
+    stratum_plus_replay:
+      replay_fraction_start: 0.35
+      replay_fraction_end: 0.50
+      replay_fraction_ramp_steps: 80
+      replay_min_count: 16
+      replay_pool_max_size: 6000
+      priority_var_weight: 0.80
+      priority_hard_weight: 0.20
+      priority_format_weight: 0.00
+      reward_ema_alpha: 0.30
+      cache_rollouts: true
+      max_rollout_reuses: 3
+      cache_pool_max_size: 800
+  curriculum:
+    signal: cls
+    reward_ema_alpha: 0.3
+    tau_start: 0.35
+    tau_end: 0.70
+    ramp_steps: 50
+    stratum_sampler:
+      alpha: 0.12
+      beta: 2.0
+      ucb_c: 0.4
+      floor: 0.05
+      hardness_weight: 0.0
+      max_stratum_weight: 1.0
+  budget_penalty_start: 0.40  # lottery ticket scale drops linearly from 1→0 between start and zero
+  budget_penalty_zero: 0.60   # lottery ticket scale = 0 for spans opening beyond this budget fraction
+  eval_every_steps: 5
+  early_stop_patience_evals: 10
+  checkpoint_every: 5
+  format_health_streak: 3
+  format_health_threshold: 0.2
+  audit_log_path: "audit_log.jsonl"
+  eval_audit_log_path: "eval_audit_log.jsonl"
+  format_fail_audit_path: "format_fail_audit.jsonl"
+  agg_softmax_beta: 3.0
+  reward:
+    cls:
+      weight: 3
+    ann:
+      weight: 2
+      wrong_direction_divisor: 8.0
+      count_factor_enabled: true
+    count:
+      words_per_ann: 20
+    granularity:
+      target_span_len: 70.0
+    verdict_why:
+      word_low: 50
+      word_high: 150
+      word_zero: 200
+    why:
+      len_low: 1
+      len_high: 15
+    outer_credibility:
+      weight: 0.5
+      gate_on_direction: true
+    verdict_why_quality:
+      weight: 0.5
+    verdict_score:
+      weight: 2.0
+    verdict_quote_coverage:
+      weight: 2.0
+    margin:
+      weight: 2.0
+      threshold: 0.0
+      wrong_direction_penalty: 0.0  # 0=disabled (current runs); set 1.0 for next experiment
+  group_variance_top_p: 1.0
+  cls_adv_mode: "binary"       # "binary": fixed ±cls_adv_weight per verdict token; "score_grpo": continuous GRPO
+  cls_adv_weight: 3.0          # scales binary verdict-type advantage (effective only when cls_adv_mode="binary")
+  advantage_normalization: "mean"
+  margin_adv_weight: 0.8
+  outer_credibility_adv_weight: 0.0    # rubric disabled → outer_credibility is constant 0.5, zero gradient; re-enable if rubric is restored
+  verdict_why_adv_weight: 5.0   # layered: gate × (ann_recall + quote_coverage); primary verdict why signal
+  ann_type_adv_weight: 1.0      # binary ±weight on inner ann type tokens (ptok scale 25× applies on top)
+  advantage_ema_alpha: 0.05
+  advantage_std_floor_frac: 0.5
+  k_init: 16
+  k_final: 8
+  k_decay_steps: 200
+  n_gradient_steps_per_batch: 3
+  sft_ce_batch_size: 8
+  sft_ce_lr_scale: 1.0
+  span_open_ce_lr_scale: 1.0
+  hint_outer_ce_enabled: true
+  struct_token_adv: 0.1
+  doc_copy_ce_weight: 0.3
+  span_open_loss_mass: 0.08
+  span_count_adv_weight: 0.3
+  span_count_ceiling_factor: 1.2   # ceiling at 1.2x target_n; excess penalty kicks in above this
+  span_excess_penalty: 3.0         # per-span penalty weight when n_tells > ceiling_n (above-ceiling valid rollouts)
+  span_open_fail_penalty: 0.0
+  format_fail_penalty: 2.0
+  format_fix_penalty: 0.0         # disabled: strict_format_opt=true excludes fixed rollouts from RL entirely
+  strict_format_opt: true         # only use rollouts correct BEFORE format_fix for RL; broken-but-fixed → CE only
+                                   # get uniform strongly-negative group advantage (prevents mode-switching to
+                                   # alternative format-failure modes like mock-copy)
+  format_fix_opt_char_ratio: 0.1  # if >0, fixed rollouts with char_diff/len(response) <= ratio are used for RL opt
+                                   # (not just CE). 0.05 allows minor fixes (doc-copy alignment) while blocking
+                                   # major rewrites that would corrupt per-token PTAD advantages.
+  # Per-token-type PPO loss multipliers (region totals renormalized after scaling).
+  # Boost type tokens (~1–2 tok/ann) vs long why text (~27× more tokens).
+  # Score tokens: IS-corrected advantage is computed but gradient blocked here (0.0).
+  # Re-enable score optimization by setting these non-zero — no code change needed.
+  ptok_loss_scale_ann_type: 25.0
+  ptok_loss_scale_ann_why: 1.0
+  ptok_loss_scale_ann_score: 0.0      # keep disabled: ann scores are self-referential (rubric_credibility gating)
+  ptok_loss_scale_verdict_type: 50.0
+  ptok_loss_scale_verdict_why: 1.0
+  ptok_loss_scale_verdict_score: 0.0
+  ptok_loss_scale_span_open: 1.0
+  ptok_loss_scale_structural: 1.0
+
+sampling:
+  max_tokens: ${mul:12,${data.max_doc_tokens}}
+  temperature: 1.0
+  top_p: 1.0
+  reasoning_effort: "low"
+  force_stub_sampling: true # inject analysis stub directly into sampling prompt; model only generates
+                             # response tokens — faster, no post-hoc replacement, identical train/eval distribution
+
+frozen:
+  provider: "xai"
+  model: "grok-4-1-fast-non-reasoning"
+  seed: 2262
+  max_concurrent: 128           # max parallel requests (64 per exp × 4 parallel = 256 total)
+  max_tokens: 256              # raised from 512: rubric JSON with 30+ annotations was truncating at 512
+  temperature: 0.7
+  top_p: 0.95
+
+wandb:
+  enabled: true
+  project: "tell"
+  entity: null               # set to your wandb username or team, or leave null
+  name: "tell_run"
+  weave_trace: true           # log Tinker SDK calls to Weave (same W&B project)
+
+web:
+  checkpoint_path: "acmc/TELL"  # released model weights on HuggingFace
+  host: "127.0.0.1"
+  port: 8000
+  result_cache: true

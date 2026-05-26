@@ -1,0 +1,264 @@
+schema_version: 1
+defaults:
+  batch_size: 4
+  max_length: 512
+  score_direction: higher_is_ai
+
+detectors:
+  openai_roberta:
+    display_name: OpenAI RoBERTa GPT-2 detector
+    kind: hf_classifier
+    model_id: openai-community/roberta-base-openai-detector
+    source: https://huggingface.co/openai-community/roberta-base-openai-detector
+    citation: Solaiman et al. 2019
+    ai_label_regex: "(fake|generated|label_1)"
+    batch_size: 128
+    max_length: 512
+    builtin_threshold: 0.5
+
+  chatgpt_d:
+    display_name: ChatGPT-D RoBERTa
+    kind: hf_classifier
+    model_id: Hello-SimpleAI/chatgpt-detector-roberta
+    source: https://github.com/Hello-SimpleAI/chatgpt-comparison-detection
+    citation: Guo et al. 2023
+    ai_label_regex: "(chatgpt|generated|machine|label_1)"
+    batch_size: 64
+    max_length: 512
+    builtin_threshold: 0.5
+
+  argugpt:
+    display_name: ArguGPT document RoBERTa
+    kind: hf_classifier
+    model_id: SJTU-CL/RoBERTa-large-ArguGPT
+    source: https://github.com/huhailinguist/ArguGPT
+    citation: Liu et al. 2023
+    ai_label_regex: "(machine|generated|gpt|label_1)"
+    batch_size: 32
+    max_length: 512
+    builtin_threshold: 0.5
+
+  radar:
+    display_name: RADAR Vicuna-7B robust detector
+    kind: hf_classifier
+    model_id: TrustSafeAI/RADAR-Vicuna-7B
+    source: https://github.com/IBM/RADAR
+    citation: Hu et al. 2023
+    ai_label_index: 0
+    batch_size: 8
+    max_length: 512
+    builtin_threshold: 0.5
+
+  pangram_editlens_llama:
+    display_name: Pangram EditLens Llama-3.2-3B
+    kind: pangram_editlens
+    checkpoint: pangram/editlens_Llama-3.2-3B
+    base_model_name: meta-llama/Llama-3.2-3B
+    source: https://huggingface.co/pangram/editlens_Llama-3.2-3B
+    citation: Thai et al. 2025
+    hf_token_env: HF_TOKEN
+    max_length: 1024
+    batch_size: 4
+    builtin_threshold: 0.5
+    load_in_4bit: true
+    bnb_4bit_quant_type: nf4
+    bnb_4bit_compute_dtype: bfloat16
+
+  aigc_mpu_env3:
+    display_name: AIGC MPU English v3
+    kind: hf_classifier
+    model_id: yuchuantian/AIGC_detector_env3
+    vendor_path: vendor/aigc_mpu
+    source: https://github.com/YuchuanTian/AIGC_text_detector
+    citation: Tian et al. 2023
+    ai_label_index: 1
+    batch_size: 128
+    max_length: 512
+    builtin_threshold: 0.5
+    paper_note: "Uses the upstream latest English MPU RoBERTa checkpoint; the released HF Space maps id2label=['Human', 'AI'], so class 1 is score_ai."
+
+  meld:
+    display_name: MELD
+    kind: meld
+    model_id: anon-review-meld-2026/meld
+    revision: 3383dc2f02abacb45a7dd28568e82e0836ec740e
+    source: https://huggingface.co/anon-review-meld-2026/meld
+    citation: Li et al. 2026
+    max_length: 2048
+    stride: 512
+    batch_size: 4
+    builtin_threshold: 0.5
+    paper_note: "Uses the released HF MELD checkpoint and the main two-way AI/Human head; long documents are chunked with mean score aggregation."
+
+  t5_sentinel:
+    display_name: T5Sentinel
+    kind: t5_sentinel
+    vendor_path: vendor/t5_sentinel
+    source: https://github.com/MarkChenYutian/T5-Sentinel-public
+    citation: Chen et al. 2023
+    base_model_name: t5-small
+    checkpoint: cache/t5_sentinel/T5Sentinel.0613.pt
+    checkpoint_url: https://github.com/MarkChenYutian/T5-Sentinel-public/releases/download/InitialCommit/T5Sentinel.0613.pt
+    max_length: 512
+    batch_size: 16
+    builtin_threshold: 0.5
+
+  mage_d:
+    display_name: MAGE-D Longformer detector
+    kind: mage
+    model_id: yaful/MAGE
+    tokenizer_id: allenai/longformer-base-4096
+    vendor_path: vendor/mage
+    source: https://github.com/yafuly/MAGE
+    citation: Li et al. 2024
+    threshold: -3.08583984375
+    threshold_scale: 1.0
+    batch_size: 8
+    max_length: 4096
+
+  binoculars:
+    display_name: Binoculars
+    kind: binoculars
+    vendor_path: vendor/binoculars
+    source: https://github.com/ahans30/Binoculars
+    citation: Hans et al. 2024
+    observer_name_or_path: tiiuae/falcon-7b
+    performer_name_or_path: tiiuae/falcon-7b-instruct
+    mode: low-fpr
+    threshold_scale: 0.05
+    max_token_observed: 512
+    batch_size: 1
+
+  fast_detectgpt:
+    display_name: Fast-DetectGPT
+    kind: fast_detectgpt
+    vendor_path: vendor/fast_detectgpt
+    source: https://github.com/baoguangsheng/fast-detect-gpt
+    citation: Bao et al. 2024
+    sampling_model_name: gpt-neo-2.7B
+    scoring_model_name: gpt-neo-2.7B
+    cache_dir: cache/huggingface
+
+  detectgpt:
+    display_name: DetectGPT
+    kind: perturbation_metric
+    method: detectgpt
+    source: https://github.com/eric-mitchell/detect-gpt
+    citation: Mitchell et al. 2023
+    base_model_name: gpt2-medium
+    mask_filling_model_name: t5-large
+    n_perturbations: 10
+    pct_words_masked: 0.3
+    span_length: 2
+    batch_size: 1
+    perturb_batch_size: 1
+
+  detectllm_lrr:
+    display_name: DetectLLM-LRR
+    kind: metric_lm
+    method: lrr
+    source: https://github.com/mbzuai-nlp/DetectLLM
+    citation: Su et al. 2023
+    base_model_name: gpt2-medium
+    batch_size: 8
+    score_scale: 6.0
+
+  logrank_gpt2_medium:
+    display_name: LogRank GPT-2-medium
+    kind: metric_lm
+    method: logrank
+    source: https://doi.org/10.18653/v1/2020.acl-main.164
+    citation: Ippolito et al. 2020
+    base_model_name: gpt2-medium
+    batch_size: 8
+    max_length: 1024
+    raw_threshold: 2.75
+    score_scale: 1.0
+    paper_note: "Raw mean log-rank is lower for more model-like text, so the wrapper inverts it into score_ai."
+
+  phd_roberta:
+    display_name: PHD RoBERTa intrinsic dimension
+    kind: phd
+    vendor_path: vendor/gptid
+    source: https://github.com/ArGintum/GPTID
+    citation: Tulchinskii et al. 2023
+    model_id: FacebookAI/roberta-base
+    batch_size: 16
+    max_length: 512
+    min_subsample: 40
+    intermediate_points: 7
+    alpha: 1.0
+    n_points: 9
+    metric: euclidean
+    raw_threshold: 8.5
+    score_scale: 1.0
+    seed: 0
+    paper_note: "Uses official PHD estimator with NAACL detector-eval defaults; raw intrinsic dimension is lower for more model-like text, so the wrapper inverts it into score_ai."
+
+  detectllm_npr:
+    display_name: DetectLLM-NPR
+    kind: perturbation_metric
+    method: npr
+    source: https://github.com/mbzuai-nlp/DetectLLM
+    citation: Su et al. 2023
+    base_model_name: gpt2-medium
+    mask_filling_model_name: t5-large
+    n_perturbations: 10
+    pct_words_masked: 0.3
+    span_length: 2
+    batch_size: 1
+    perturb_batch_size: 4
+
+  dnagpt:
+    display_name: DNA-GPT local regeneration
+    kind: dnagpt
+    vendor_path: vendor/dnagpt
+    source: https://github.com/Xianjun-Yang/DNA-GPT
+    citation: Yang et al. 2023
+    generator_model_name: gpt2-medium
+    batch_size: 4
+    n_regenerations: 5
+    max_new_tokens: 128
+    ngram_order: 4
+    threshold: 0.00025
+    threshold_scale: 0.0001
+
+  mfd:
+    display_name: Multi-Feature Detection
+    kind: mfd
+    source: https://assets-eu.researchsquare.com/files/rs-3226684/v1_covered_def36854-d747-4cc4-b19a-7d3b559405d3.pdf
+    citation: Wu and Xiang 2023
+    base_model_name: gpt2
+    batch_size: 16
+    fit_batch_size: 16
+    model_path: results/models/mfd.joblib
+    feature_names:
+      - log_likelihood
+      - log_rank
+      - entropy
+      - llm_deviation
+
+  gpt_oss_direct:
+    display_name: GPT-OSS-120B zero-shot direct classifier
+    kind: gpt_oss_direct
+    base_model: openai/gpt-oss-120b
+    citation: baseline
+    reasoning_effort: low
+    concurrency: 64
+    builtin_threshold: 0.5
+
+  ghostbuster:
+    display_name: Ghostbuster
+    kind: ghostbuster
+    enabled: false
+    paper_include: false
+    exclude_reason: "Excluded from planned paper benchmark runs because faithful current execution requires paid OpenAI echo/logprobs calls and is only a compatibility port for retired ada/davinci models."
+    vendor_path: vendor/ghostbuster
+    source: https://github.com/vivek3141/ghostbuster
+    citation: Verma et al. 2024
+    openai_key_env: OPENAI_API_KEY
+    original_ada_model: ada
+    original_davinci_model: davinci
+    compatibility_variant: openai_base_replacements_2024
+    ada_model: babbage-002
+    davinci_model: davinci-002

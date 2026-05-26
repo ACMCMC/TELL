@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "detectors-bench"
+version = "0.1.0"
+description = "Isolated benchmark harness for external AI-text detectors."
+requires-python = ">=3.10"
+dependencies = [
+  "joblib>=1.3",
+  "numpy>=1.24",
+  "PyYAML>=6.0",
+  "scikit-learn>=1.3",
+  "scipy>=1.10",
+  "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+hf = [
+  "torch",
+  "transformers>=4.40",
+  "accelerate",
+  "sentencepiece",
+  "huggingface_hub",
+  "safetensors",
+]
+pangram = [
+  "torch",
+  "transformers>=4.40",
+  "accelerate",
+  "sentencepiece",
+  "peft>=0.11",
+  "bitsandbytes>=0.43",
+  "safetensors",
+  "emoji>=2.10",
+]
+dev = [
+  "pytest>=8.0",
+]
+
+[project.scripts]
+detectors-run = "detectors_bench.run_detector:main"
+detectors-benchmark = "detectors_bench.run_benchmark:main"
+detectors-summarize = "detectors_bench.summarize_results:main"
+detectors-fit-mfd = "detectors_bench.fit_mfd:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
