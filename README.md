@@ -293,7 +293,7 @@ Key flags:
 uv run pytest tests/
 ```
 
-The test suite covers annotation parsing, format fixing, reward computation, per-token advantage decomposition, and data sampling. No API keys are required.
+The test suite covers annotation parsing, format fixing, reward computation, per-token advantage decomposition, and data sampling. No API keys are required to run tests.
 
 ---
 
