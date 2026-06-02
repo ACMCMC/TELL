@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use TELL, please cite the paper and repository."
+title: "TELL: Show, Don't TELL — Explainable AI-Generated Text Detection"
+version: "0.1.0"
+authors:
+  - given-names: "Aldan"
+    family-names: "Creo"
+    email: "research@acmc.fyi"
+  - given-names: "Suraj"
+    family-names: "Ranganath"
+    email: "suranganath@ucsd.edu"
+repository-code: "https://github.com/ACMCMC/TELL"
+url: "https://github.com/ACMCMC/TELL"
+abstract: "TELL is an explainable AI-generated text detector that annotates input spans and explains why each span is evidence of AI or human authorship."
+keywords:
+  - "AI-generated text detection"
+  - "explainable AI"
+  - "span annotation"
